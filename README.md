@@ -2,31 +2,41 @@
 
 **Live site:** https://ioksan.github.io
 
-A single-page CV website with an interactive 3D Earth, built as my mini-project for PFD200 Professional Development (FdSc Computing, NCG / Elizabeth School of London, 2026).
+A one-page CV website with a real-time 3D Earth, built as my mini-project ("WEB CV") for PFD200 Professional Development (FdSc Computing, NCG / Elizabeth School of London, 2026).
 
-The page opens with a particle galaxy that forms into a photorealistic Earth. Six orbiting nodes link to the CV sections: About, Experience, Projects, Skills, Education and Contact. Scrolling moves from the 3D scene into the readable CV.
+The first screen shows my name, role and the three things a recruiter needs: the CV as a PDF, LinkedIn and GitHub. A 3D Earth turns beside them, with six orbiting labels that jump to the CV sections. Scrolling brings the CV up on a light sheet over the scene.
 
-## Why I built it this way
+## Why it looks like this
 
-I wanted a portfolio that shows front-end and graphics skills, not only a list of jobs. The content still reads as a normal CV for a recruiter who just scrolls. If WebGL is not available, the 3D scene is skipped and the sections remain readable.
+Version 1 opened on the 3D scene alone, and a visitor had to scroll before learning who I was. Recruiters spend around 7.4 seconds on a first look at a CV and respond best to simple layouts with clear headings (HR Dive, 2018, reporting the Ladders eye-tracking study). Version 2 keeps the Earth as the one striking element and puts everything else in plain, scannable order:
+
+- name, role and actions on the first screen;
+- dates in a left column and results in a right column, read top to bottom;
+- one column of text under 72 characters per line;
+- the page prints as a clean CV with the scene removed.
+
+The typeface is IBM Plex, a quiet nod to IBM, where my IT career started.
 
 ## Tech stack
 
 | Area | Technology |
 | --- | --- |
-| Markup and layout | HTML5, CSS3 (custom properties, flexbox, backdrop blur) |
+| Markup and layout | HTML5, CSS3 (grid, custom properties, print styles) |
 | 3D rendering | Three.js r128, self-hosted (`three.min.js`) |
 | Shaders | Custom GLSL: day/night Earth blend, cloud layer, 18,000-particle morph |
-| Post-processing | Bloom (bright pass + separable Gaussian blur), ACES tone mapping, chromatic aberration, film grain, vignette |
-| Branding | MiniPause animated lemniscate logo, drawn in SVG from JavaScript |
+| Post-processing | Bloom (bright pass + separable Gaussian blur), ACES tone mapping, vignette |
+| Type | IBM Plex Sans and IBM Plex Sans Condensed (Google Fonts) |
 | Hosting | GitHub Pages |
 
 ## How it works
 
-1. **Intro morph.** Each particle stores two positions: a point on the Earth's sphere and a point in a spiral galaxy. A vertex shader blends between them with a smoothstep curve.
-2. **Earth.** A fragment shader mixes NASA day and night textures by the angle to a moving sun, adds specular light on water, and fades with the intro.
-3. **Navigation.** Six sprites orbit the Earth. Their screen positions are projected each frame and HTML labels follow them. Clicking a label scrolls to its section.
-4. **Post-processing.** The scene renders to an off-screen target, then passes through bright-pass, blur and composite shaders. If render targets fail, the page falls back to a plain render.
+1. **Content first.** The CV is ordinary HTML. It shows before any texture loads and still works with JavaScript off.
+2. **Intro.** Each particle stores a point on the Earth and a point in a spiral galaxy; a vertex shader blends between them over a timed 3.5-second intro, so slow devices finish at the same moment.
+3. **Earth.** A fragment shader mixes NASA day and night textures by the angle to a moving sun and adds a highlight on water. Phones load a 2K texture instead of the 4K one.
+4. **Navigation.** Six sprites orbit the Earth; their screen positions are projected each frame and HTML labels follow them. The side column has the same six links for keyboard and mobile users.
+5. **Battery.** Once the CV covers the screen, the render loop stops drawing.
+
+The code is commented section by section in `index.html`.
 
 ## Security and privacy
 
@@ -40,7 +50,8 @@ These choices follow the threat table in my portfolio (Task 1.4):
 
 ## Accessibility
 
-- Visible focus outlines for keyboard users.
+- Automated audit with axe-core against WCAG 2.1 A and AA: no violations (21 October 2026).
+- Skip link, labelled sections and visible focus outlines for keyboard users.
 - `prefers-reduced-motion` turns off smooth scrolling and the scroll cue animation.
 - Readable layout below 600 px wide; the particle count drops on small screens.
 - Content stays readable without JavaScript.
@@ -63,12 +74,14 @@ Then open http://localhost:8000. Opening `index.html` directly from disk also wo
 
 ## Known limitations
 
-- `index.html` is about 1.6 MB because the Earth textures are embedded as data URIs. Moving them to separate compressed image files would speed up the first load.
-- The 3D scene is demanding on older phones.
+- The Earth textures total about 1.2 MB. They load after the text, but on a slow connection the globe appears a few seconds later.
+- The 3D scene is demanding on older phones; the orbit labels are hidden on small screens.
 - Google Fonts are loaded from Google's servers.
+- Not yet tested with a screen reader.
 
 ## Credits and licence
 
 - Three.js © 2010–2021 Three.js authors, MIT licence (see `THREE_LICENSE.txt`).
-- Earth textures based on NASA imagery.
+- Earth textures based on NASA imagery, in `assets/`.
+- Recruiter reading time: HR Dive (2018) *Recruiters spend 7.4 seconds looking at your resume*, reporting the Ladders eye-tracking study.
 - Site code and content © 2026 Andrei-Cosmin Tutea. Built under the MiniPause brand.
