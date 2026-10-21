@@ -15,7 +15,7 @@ Version 1 opened on the 3D scene alone, and a visitor had to scroll before learn
 - one column of text under 72 characters per line;
 - the page prints as a clean CV with the scene removed.
 
-The typeface is IBM Plex, a quiet nod to IBM, where my IT career started.
+The typeface is IBM Plex, a quiet nod to the IBM equipment my IT career started on.
 
 ## Tech stack
 
